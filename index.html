@@ -1,4 +1,21 @@
-<!doctype html>\n<html lang="en">\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1"/>\n  <title>WordlyWise</title>\n  <link rel="stylesheet" href="style.css"/>\n</head>\n<body>\n  <header class="app-header">\n    <h1>WordlyWise</h1>\n  </header>\n  <nav class="tabs">\n    <button data-tab="wordlist" class="tab active">Word List</button>\n    <button data-tab="flashcards" class="tab">Flashcards</button>\n    <button data-tab="spelling" class="tab">Spelling</button>\n  </nav>\n  <main>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>WordlyWise</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <header class="app-header">
+    <h1>WordlyWise</h1>
+  </header>
+  <nav class="tabs">
+    <button data-tab="wordlist" class="tab active">Word List</button>
+    <button data-tab="flashcards" class="tab">Flashcards</button>
+    <button data-tab="spelling" class="tab">Spelling</button>
+  </nav>
+  <main>
   <div id="start-screen" class="start-overlay">
     <div class="start-card">
       <h2>Welcome!</h2>
@@ -10,7 +27,71 @@
       </div>
     </div>
   </div>
-\n    <section id="wordlist" class="panel active">\n      <div class="row">\n        <div class="card">\n          <h2>Add/Update Week</h2>\n          <label>Week name\n            <input id="week-name" type="text" placeholder="e.g., Week 3"/>\n          </label>\n          <label>Words (one per line)\n            <textarea id="week-words" rows="8" placeholder="cat\nplay\njump"></textarea>\n          </label>\n          <div class="actions">\n            <button id="save-week" class="primary">Save Week</button>\n            <button id="clear-form" class="ghost">Clear</button>\n          </div>\n        </div>\n        <div class="card">\n          <h2>Weeks</h2>\n          <div class="toolbar">\n            <input id="filter-weeks" type="text" placeholder="Filter weeks..."/>\n            <button id="export-data" class="ghost">Export</button>\n            <label class="import-label">Import<input id="import-data" type="file" accept="application/json"/></label>\n          </div>\n          <ul id="weeks-list" class="list"></ul>\n        </div>\n      </div>\n    </section>\n    <section id="flashcards" class="panel">\n      <div class="card">\n        <div class="toolbar">\n          <select id="flash-week"></select>\n          <button id="flash-shuffle" class="ghost">Shuffle</button>\n        </div>\n        <div id="flash-card" class="flash-card" tabindex="0">Click or press Space to flip</div>\n        <div class="actions">\n          <button id="flash-prev">Prev</button>\n          <button id="flash-speak">Speak</button>\n          <button id="flash-next">Next</button>\n        </div>\n      </div>\n    </section>\n    <section id="spelling" class="panel">\n      <div class="card">\n        <div class="toolbar">\n          <select id="spell-week"></select>\n          <button id="spell-start" class="primary">Start</button>\n        </div>\n        <div id="spell-area" class="hidden">\n          <div class="prompt">\n            <button id="spell-speak" class="ghost">Hear word</button>\n            <button id="spell-hint" class="ghost">Hint</button>\n          </div>\n          <input id="spell-input" type="text" placeholder="Type the word" autocomplete="off"/>\n          <div class="actions">\n            <button id="spell-submit" class="primary">Check</button>\n            <button id="spell-skip" class="ghost">Skip</button>\n          </div>\n          <div id="spell-feedback"></div>\n          <div id="spell-progress" class="progress"></div>\n        </div>\n      </div>\n    </section>\n  </main>
+
+    <section id="wordlist" class="panel active">
+      <div class="row">
+        <div class="card">
+          <h2>Add/Update Week</h2>
+          <label>Week name
+            <input id="week-name" type="text" placeholder="e.g., Week 3"/>
+          </label>
+          <label>Words (one per line)
+            <textarea id="week-words" rows="8" placeholder="cat
+play
+jump"></textarea>
+          </label>
+          <div class="actions">
+            <button id="save-week" class="primary">Save Week</button>
+            <button id="clear-form" class="ghost">Clear</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Weeks</h2>
+          <div class="toolbar">
+            <input id="filter-weeks" type="text" placeholder="Filter weeks..."/>
+            <button id="export-data" class="ghost">Export</button>
+            <label class="import-label">Import<input id="import-data" type="file" accept="application/json"/></label>
+          </div>
+          <ul id="weeks-list" class="list"></ul>
+        </div>
+      </div>
+    </section>
+    <section id="flashcards" class="panel">
+      <div class="card">
+        <div class="toolbar">
+          <select id="flash-week"></select>
+          <button id="flash-shuffle" class="ghost">Shuffle</button>
+        </div>
+        <div id="flash-card" class="flash-card" tabindex="0">Click or press Space to flip</div>
+        <div class="actions">
+          <button id="flash-prev">Prev</button>
+          <button id="flash-speak">Speak</button>
+          <button id="flash-next">Next</button>
+        </div>
+      </div>
+    </section>
+    <section id="spelling" class="panel">
+      <div class="card">
+        <div class="toolbar">
+          <select id="spell-week"></select>
+          <button id="spell-start" class="primary">Start</button>
+        </div>
+        <div id="spell-area" class="hidden">
+          <div class="prompt">
+            <button id="spell-speak" class="ghost">Hear word</button>
+            <button id="spell-hint" class="ghost">Hint</button>
+          </div>
+          <input id="spell-input" type="text" placeholder="Type the word" autocomplete="off"/>
+          <div class="actions">
+            <button id="spell-submit" class="primary">Check</button>
+            <button id="spell-skip" class="ghost">Skip</button>
+          </div>
+          <div id="spell-feedback"></div>
+          <div id="spell-progress" class="progress"></div>
+        </div>
+      </div>
+    </section>
+  </main>
   <div id="rewards-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="rewards-title">
     <div class="modal-content">
       <h2 id="rewards-title">Great work!</h2>
@@ -22,4 +103,10 @@
       <canvas id="confetti" class="confetti"></canvas>
     </div>
   </div>
-\n  <footer class="app-footer">\n    <span id="stats"></span>\n  </footer>\n  <script src="app.js"></script>\n</body>\n</html>\n
+
+  <footer class="app-footer">
+    <span id="stats"></span>
+  </footer>
+  <script src="app.js"></script>
+</body>
+</html>
