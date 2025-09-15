@@ -53,6 +53,14 @@ jump"></textarea>
             <button id="import-json" class="ghost">Import</button>
             <input id="import-data" type="file" accept="application/json" style="display:none"/>
           </div>
+
+          <div class="toolbar">
+            <label>CSV file
+              <input id="import-csv" type="file" accept=".csv,text/csv"/>
+            </label>
+            <input id="sheets-url" type="url" placeholder="Google Sheets CSV URL (Export)"/>
+            <button id="import-sheets" class="ghost">Import from Sheets</button>
+          </div>
           <ul id="weeks-list" class="list"></ul>
         </div>
       </div>
