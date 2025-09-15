@@ -16,3 +16,13 @@
 .start-buttons{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:12px}
 .start-btn{font-size:18px;padding:16px 18px;border:2px solid var(--primary);border-radius:12px;background:#fff}
 .start-btn:hover{background:var(--primary);color:#fff}
+
+
+/* Definition Quiz */
+.def-word-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.def-word{font-weight:700;font-size:20px}
+.def-options{display:grid;grid-template-columns:1fr;gap:8px;margin:8px 0}
+.def-option{padding:12px;border:1px solid var(--border);border-radius:10px;background:#fff;text-align:left;cursor:pointer}
+.def-option.correct{border-color:var(--success);background:rgba(22,163,74,.06)}
+.def-option.wrong{border-color:var(--danger);background:rgba(220,38,38,.06)}
+.def-score{color:var(--muted);margin-left:8px}

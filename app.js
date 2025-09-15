@@ -109,3 +109,94 @@
 
   initVoices(); renderWeeks(); populateWeekSelectors(); renderStats(); wireStart();
 })();
+
+// Definition Quiz logic
+var DEF_CACHE_KEY = 'wordlywise_defs_v1';
+function loadDefs(){ try { return JSON.parse(localStorage.getItem(DEF_CACHE_KEY)||'{}'); } catch(e){ return {}; } }
+function saveDefs(m){ localStorage.setItem(DEF_CACHE_KEY, JSON.stringify(m)); }
+var defCache = loadDefs();
+function fetchDefinition(word){
+  word = String(word||'').toLowerCase();
+  if(defCache[word]) return Promise.resolve(defCache[word]);
+  var url = 'https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(word);
+  return fetch(url).then(function(r){ if(!r.ok) throw new Error('http '+r.status); return r.json(); }).then(function(arr){
+    var def = '';
+    try {
+      var entry = arr[0];
+      var meanings = entry.meanings||[];
+      for(var i=0;i<meanings.length;i++){
+        var defs = meanings[i].definitions||[];
+        if(defs[0] && defs[0].definition){ def = defs[0].definition; break; }
+      }
+    } catch(e){}
+    if(!def) def = 'No definition available.';
+    defCache[word] = def; saveDefs(defCache);
+    return def;
+  }).catch(function(){ return 'No definition available.'; });
+}
+function getRandomIndices(n, total, excludeIdx){
+  var picks = [];
+  var used = {};
+  if(typeof excludeIdx==='number') used[excludeIdx]=true;
+  while(picks.length < Math.min(n, total-1)){
+    var r = Math.floor(Math.random()*total);
+    if(!used[r]){ used[r]=true; picks.push(r); }
+  }
+  return picks;
+}
+var defquiz = { words: [], ix: 0, correct: 0, options: [] };
+function setupDefQuiz(){
+  var name = decodeURIComponent((document.getElementById('def-week')||{}).value || '');
+  var wk = state.weeks.find(function(w){ return w.name===name; });
+  defquiz.words = wk? wk.words.slice(): [];
+  defquiz.ix = 0; defquiz.correct = 0;
+  document.getElementById('def-area').classList.toggle('hidden', defquiz.words.length===0);
+  document.getElementById('def-next').disabled = true;
+  document.getElementById('def-score').textContent = '';
+  if(defquiz.words.length) renderDefQuestion();
+}
+function renderDefQuestion(){
+  var word = defquiz.words[defquiz.ix];
+  var optsEl = document.getElementById('def-options');
+  var wordEl = document.getElementById('def-word');
+  var nextBtn = document.getElementById('def-next');
+  nextBtn.disabled = true; wordEl.textContent = word; optsEl.innerHTML='';
+  var total = defquiz.words.length;
+  var wrongIdxs = getRandomIndices(3, total, defquiz.ix);
+  var pool = [word];
+  wrongIdxs.forEach(function(i){ pool.push(defquiz.words[i]); });
+  var defsPromises = pool.map(fetchDefinition);
+  Promise.all(defsPromises).then(function(defs){
+    var items = defs.map(function(d,i){ return { def:d, correct: i===0 }; });
+    // shuffle options
+    for(var i=items.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=items[i]; items[i]=items[j]; items[j]=t; }
+    defquiz.options = items;
+    items.forEach(function(item){
+      var btn = document.createElement('button'); btn.className='def-option'; btn.textContent = item.def;
+      btn.addEventListener('click', function(){
+        // disable all
+        Array.prototype.slice.call(optsEl.children).forEach(function(b){ b.disabled=true; });
+        if(item.correct){ btn.classList.add('correct'); defquiz.correct++; }
+        else { btn.classList.add('wrong');
+          // show the correct one
+          Array.prototype.slice.call(optsEl.children).forEach(function(b,idx){ if(items[idx].correct) b.classList.add('correct'); });
+        }
+        document.getElementById('def-score').textContent = defquiz.correct + '/' + (defquiz.ix+1);
+        nextBtn.disabled = false;
+      });
+      optsEl.appendChild(btn);
+    });
+  });
+}
+function nextDefQuestion(){
+  defquiz.ix++;
+  var done = defquiz.ix >= defquiz.words.length;
+  if(done){
+    showRewards(defquiz.correct, defquiz.words.length);
+    document.getElementById('def-area').classList.add('hidden');
+  } else { renderDefQuestion(); }
+}
+var defWeekSel = document.getElementById('def-week'); if(defWeekSel){ defWeekSel.innerHTML = byId('flash-week').innerHTML; }
+document.getElementById('def-start') && document.getElementById('def-start').addEventListener('click', setupDefQuiz);
+document.getElementById('def-next') && document.getElementById('def-next').addEventListener('click', nextDefQuestion);
+document.getElementById('def-speak') && document.getElementById('def-speak').addEventListener('click', function(){ var w=document.getElementById('def-word').textContent; speak(w); });
