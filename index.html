@@ -66,6 +66,23 @@ jump"></textarea>
       </div>
     </section>
     <section id="flashcards" class="panel">
+      <div class="card" id="defquiz">
+        <div class="toolbar">
+          <select id="def-week"></select>
+          <button id="def-start" class="primary">Start Definition Quiz</button>
+        </div>
+        <div id="def-area" class="hidden">
+          <div class="def-word-row">
+            <span id="def-word" class="def-word"></span>
+            <button id="def-speak" class="ghost">Speak</button>
+          </div>
+          <div id="def-options" class="def-options"></div>
+          <div class="actions">
+            <button id="def-next" class="ghost" disabled>Next</button>
+            <span id="def-score" class="def-score"></span>
+          </div>
+        </div>
+      </div>
       <div class="card">
         <div class="toolbar">
           <select id="flash-week"></select>
@@ -78,12 +95,6 @@ jump"></textarea>
           <button id="flash-next">Next</button>
         </div>
       </div>
-    
-      <div class="card" id="defquiz">
-        <div class="toolbar">
-          <select id="def-week"></select>
-          <button id="def-start" class="primary">Start Definition Quiz</button>
-        </div>
         <div id="def-area" class="hidden">
           <div class="def-word-row">
             <span id="def-word" class="def-word"></span>
