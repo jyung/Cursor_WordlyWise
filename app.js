@@ -225,6 +225,32 @@ function showRewards(correct,total){
   document.getElementById("rewards-close").onclick=function(){ modal.classList.add("hidden"); };
 }
 
+function hideStart(){ var el=document.getElementById('start-screen'); if(el) el.classList.add('hidden'); }
+function wireStart(){
+  var el=document.getElementById('start-screen'); if(!el) return; 
+  el.addEventListener('click', function(e){ var t=e.target.closest('.start-btn'); if(!t) return; var go=t.getAttribute('data-go'); if(!go) return; hideStart(); switchTab(go); });
+}
+function parseCSV(text){
+  var lines = text.split(/?
+/).map(function(l){return l.trim();}).filter(Boolean);
+  var words=[]; var name='Imported Week';
+  for(var i=0;i<lines.length;i++){
+    var parts = lines[i].split(',').map(function(x){return x.trim();}).filter(Boolean);
+    if(i===0 && parts.length===1 && /week/i.test(parts[0])){ name = parts[0]; continue; }
+    for(var j=0;j<parts.length;j++){ if(parts[j]) words.push(parts[j].toLowerCase()); }
+  }
+  words = Array.from(new Set(words));
+  return { name:name, words:words };
+}
+function importCSVFile(file){
+  var reader=new FileReader();
+  reader.onload=function(){ try{ var pack=parseCSV(String(reader.result||'')); if(!pack.words.length){ alert('No words found in CSV'); return; } var ix = state.weeks.findIndex(function(w){return w.name===pack.name;}); if(ix>=0) state.weeks[ix]=pack; else state.weeks.push(pack); saveWeeks(state.weeks); renderWeeks(); populateWeekSelectors(); }catch(e){ alert('Invalid CSV'); } };
+  reader.readAsText(file);
+}
+function importFromSheetsCSV(url){
+  fetch(url, {cache:'no-store'}).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.text(); }).then(function(text){ var pack=parseCSV(text); if(!pack.words.length){ alert('No words found'); return; } var ix = state.weeks.findIndex(function(w){return w.name===pack.name;}); if(ix>=0) state.weeks[ix]=pack; else state.weeks.push(pack); saveWeeks(state.weeks); renderWeeks(); populateWeekSelectors(); }).catch(function(){ alert('Failed to fetch CSV. Make sure you used the correct export link.'); });
+}
+
 function renderStats(){
     var s = loadStats();
     var el = byId("stats");
@@ -236,4 +262,5 @@ function renderStats(){
   renderWeeks();
   populateWeekSelectors();
   renderStats();
+  wireStart();
 })();
