@@ -56,6 +56,7 @@
   byId("clear-form").addEventListener("click", function(){ byId("week-name").value=""; byId("week-words").value=""; });
   byId("filter-weeks").addEventListener("input", renderWeeks);
   byId("export-data").addEventListener("click", function(){ var blob=new Blob([JSON.stringify(state.weeks,null,2)],{type:"application/json"}); var url=URL.createObjectURL(blob); var a=document.createElement("a"); a.href=url; a.download="wordlywise_weeks.json"; a.click(); URL.revokeObjectURL(url); });
+  var importBtn=byId('import-json'); if(importBtn){ importBtn.addEventListener('click', function(){ var el=byId('import-data'); if(el) el.click(); }); }
   byId("import-data").addEventListener("change", function(ev){ var f=ev.target.files && ev.target.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(){ try{ var arr=JSON.parse(r.result); if(Array.isArray(arr)){ state.weeks=arr; saveWeeks(state.weeks); renderWeeks(); populateWeekSelectors(); } else alert("Invalid file"); }catch(e){ alert("Invalid file"); } }; r.readAsText(f); });
 
   function parseCSV(text){
