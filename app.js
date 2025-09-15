@@ -48,7 +48,7 @@
     byId(tab).classList.add("active");
     document.querySelector("[data-tab=\""+tab+"\"]").classList.add("active");
   }
-  qsa(".tab").forEach(function(b){ b.addEventListener("click", function(){ switchTab(b.dataset.tab); }); });
+  qsa(".tab").forEach(function(b){ b.addEventListener("click", function(){ try{ hideStart(); }catch(e){} switchTab(b.dataset.tab); }); });
 
   function renderWeeks(){
     var ul = byId("weeks-list");
@@ -226,9 +226,20 @@ function showRewards(correct,total){
 }
 
 function hideStart(){ var el=document.getElementById('start-screen'); if(el){ el.classList.add('hidden'); try{ localStorage.setItem('ww_start_seen','1'); }catch(e){} } }
+
 function wireStart(){
-  var el=document.getElementById('start-screen'); if(!el) return; 
-  el.addEventListener('click', function(e){ var t=e.target.closest('.start-btn'); if(!t) return; var go=t.getAttribute('data-go'); if(!go) return; hideStart(); switchTab(go); });
+  var overlay = document.getElementById('start-screen');
+  if(!overlay) return;
+  // Directly bind to each big button
+  Array.prototype.slice.call(overlay.querySelectorAll('.start-btn')).forEach(function(btn){
+    btn.addEventListener('click', function(){ var go=btn.getAttribute('data-go'); if(go){ hideStart(); switchTab(go); } });
+  });
+  // Click outside the card dismisses
+  overlay.addEventListener('click', function(e){ if(e.target===overlay){ hideStart(); } });
+  // ESC key dismisses
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ hideStart(); } });
+  // If dismissed previously, auto-hide
+  try{ if(localStorage.getItem('ww_start_seen')==='1'){ hideStart(); } }catch(e){}
 }
 function parseCSV(text){
   var lines = text.split(/
