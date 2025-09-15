@@ -225,13 +225,14 @@ function showRewards(correct,total){
   document.getElementById("rewards-close").onclick=function(){ modal.classList.add("hidden"); };
 }
 
-function hideStart(){ var el=document.getElementById('start-screen'); if(el) el.classList.add('hidden'); }
+function hideStart(){ var el=document.getElementById('start-screen'); if(el){ el.classList.add('hidden'); try{ localStorage.setItem('ww_start_seen','1'); }catch(e){} } }
 function wireStart(){
   var el=document.getElementById('start-screen'); if(!el) return; 
   el.addEventListener('click', function(e){ var t=e.target.closest('.start-btn'); if(!t) return; var go=t.getAttribute('data-go'); if(!go) return; hideStart(); switchTab(go); });
 }
 function parseCSV(text){
-  var lines = text.split(/?
+  var lines = text.split(/
+?
 /).map(function(l){return l.trim();}).filter(Boolean);
   var words=[]; var name='Imported Week';
   for(var i=0;i<lines.length;i++){
