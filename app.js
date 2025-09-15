@@ -192,7 +192,40 @@
   byId("spell-input").addEventListener("keydown", function(e){ if(e.key === "Enter"){ check(); } });
   byId("spell-skip").addEventListener("click", function(){ if(spell.ix < spell.order.length){ spell.ix++; updateSpellProgress(); if(spell.ix>=spell.order.length){ byId("spell-area").classList.add("hidden"); speak("All done!"); } else { speak(currentSpell()); } } });
 
-  function renderStats(){
+  function launchConfetti(){
+  var canvas = document.getElementById("confetti");
+  if(!canvas) return;
+  var ctx = canvas.getContext("2d");
+  function resize(){ canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
+  resize();
+  var pieces = [];
+  for(var i=0;i<120;i++){
+    pieces.push({x:Math.random()*canvas.width,y:-Math.random()*canvas.height,vy:2+Math.random()*3,color:"hsl("+Math.floor(Math.random()*360)+",90%,60%)",size:4+Math.random()*4});
+  }
+  var start = Date.now();
+  function tick(){
+    var t = Date.now()-start;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(function(p){ p.y+=p.vy; if(p.y>canvas.height) p.y=-10; ctx.fillStyle=p.color; ctx.fillRect(p.x,p.y,p.size,p.size); });
+    if(t < 4000) requestAnimationFrame(tick);
+  }
+  tick();
+}
+function showRewards(correct,total){
+  var modal=document.getElementById("rewards-modal");
+  var stars=document.getElementById("rewards-stars");
+  var score=document.getElementById("rewards-score");
+  if(!modal) return;
+  var ratio = total? correct/total : 0;
+  var starCount = ratio>=0.9? 3 : ratio>=0.7? 2 : ratio>0? 1 : 0;
+  stars.textContent = Array(starCount+1).join("⭐");
+  score.textContent = "You scored " + correct + "/" + total + "!";
+  modal.classList.remove("hidden");
+  launchConfetti();
+  document.getElementById("rewards-close").onclick=function(){ modal.classList.add("hidden"); };
+}
+
+function renderStats(){
     var s = loadStats();
     var el = byId("stats");
     if(s.lastScore){ el.textContent = "Last session: " + s.lastScore.correct + "/" + s.lastScore.total; }
